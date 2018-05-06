@@ -14,4 +14,4 @@
 &emsp;&emsp;|_ zombp     //变成僵尸进程<br>
 &emsp;同时通过top命令可以看到zombie值变成1；
 - 运行21秒主进程退出：<br>
-&emsp;主进程退出，僵尸子进程资源有Init进程接管回收资源，top命令里面zombie变成0。
+&emsp;主进程退出，僵尸子进程资源由Init进程接管回收，top命令zombie值变成0。
