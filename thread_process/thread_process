@@ -1,0 +1,78 @@
+/*
+ * author: lk
+ * date: 2018-5
+ * description: This is an example of creating thread,changing thread name,detaching thread.
+ * Include interfaces:pthread_create,pthread_detach,pthread_join,pthread_self and so on.
+ * Keep thread1 running,thread2 after 10 seconds to stop.When the process terminates,all the child thread to release.pthread_detach not really separate thread from process. 
+ * */
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <pthread.h>
+#include <sys/prctl.h>
+
+#define STRING_LENGTH_64   64
+#define STRING_LENGTH_128  128
+
+typedef struct ThreadParameters_{
+    uint8_t tcnt;
+    char tname[STRING_LENGTH_64];
+}ThreadParameters_S;
+
+void *thread_handler(void *data){
+    if(NULL == data)
+        return NULL;
+
+    ThreadParameters_S *tp = data;
+    if(1 == tp->tcnt)
+        pthread_detach(pthread_self());
+
+    prctl(PR_SET_NAME,tp->tname);
+    pid_t pid; 
+    pthread_t tid;
+
+    pid = getpid();
+    tid = pthread_self();
+
+    char logchar[STRING_LENGTH_128];
+    uint8_t cnt = 5 * tp->tcnt;
+    while(cnt-- || (1 == tp->tcnt)){
+        snprintf(logchar,STRING_LENGTH_128,"echo \"%s : pid = %u,tid = %u\" >> /home/lk/test.log",tp->tname,(unsigned int)pid,(unsigned int)tid);
+        system(logchar);
+        sleep(2);
+    }
+    return NULL;
+}
+
+int main(int argc,char* argv[]){
+    //pthread_attr_t attr;
+    //pthread_attr_init(&attr);
+    //pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
+    
+    pthread_t tid1;
+    ThreadParameters_S tp1;
+    tp1.tcnt = 1;
+    snprintf(tp1.tname,STRING_LENGTH_64,"THREAD_thread#1");
+    //int ret = pthread_create(&tid1,&attr,thread_handler,(void *)&tp1);
+    int ret = pthread_create(&tid1,NULL,thread_handler,(void *)&tp1);
+    if(0 != ret){
+        printf("pthread_create %s failed!\n",tp1.tname);
+        return -1;
+    }
+    
+    pthread_t tid2;
+    ThreadParameters_S tp2;
+    tp2.tcnt = 2;
+    snprintf(tp2.tname,STRING_LENGTH_64,"THREAD_thread#2");
+    ret =  pthread_create(&tid2,NULL,thread_handler,(void *)&tp2);
+    if(0 != ret){
+        printf("pthread_create %s failed!\n",tp2.tname);
+        return -1;
+    }
+    
+    pthread_join(tid2,NULL);
+    printf("%s is over.\n",tp2.tname);
+    getchar();
+    return 0;
+}
