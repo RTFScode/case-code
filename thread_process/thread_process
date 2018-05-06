@@ -28,6 +28,7 @@ void *thread_handler(void *data){
     if(1 == tp->tcnt)
         pthread_detach(pthread_self());
 
+    // set the thread name
     prctl(PR_SET_NAME,tp->tname);
     pid_t pid; 
     pthread_t tid;
@@ -37,7 +38,7 @@ void *thread_handler(void *data){
 
     char logchar[STRING_LENGTH_128];
     uint8_t cnt = 5 * tp->tcnt;
-    while(cnt-- || (1 == tp->tcnt)){
+    while(cnt-- || (1 == tp->tcnt)){            //THREAD_thread#1'll keep running. 
         snprintf(logchar,STRING_LENGTH_128,"echo \"%s : pid = %u,tid = %u\" >> /home/lk/test.log",tp->tname,(unsigned int)pid,(unsigned int)tid);
         system(logchar);
         sleep(2);
