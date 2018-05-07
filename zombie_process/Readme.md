@@ -18,8 +18,9 @@
  
  3、清理<br>
 - 查找僵尸进程：<br>
-&emsp;ps -A -ostate,ppid,pid,cmd | grep -e '^[Zz]'
-&emsp;ps -A&emsp;列出系统所有进程信息；
-&emsp;ps -o&emsp;自定义输出展示字段state（进程状态）,ppid（父进程id）,pid（当前进程id）,cmd（运行命令）；
-&emsp;grep -e 启用正则表达式；'^[Zz]'：Z表示僵尸进程，匹配行首
-&emsp;通过kill父进程来处理僵尸进程，原理如1中描述。
+&emsp;ps -A -ostate,ppid,pid,cmd | grep -e '^[Zz]'<br>
+&emsp;ps -A&emsp;列出系统所有进程信息；<br>
+&emsp;ps -o&emsp;自定义输出展示字段state（进程状态）,ppid（父进程id）,pid（当前进程id）,cmd（运行命令）；<br>
+&emsp;grep -e 启用正则表达式；'^[Zz]'：Z表示僵尸进程，匹配行首。<br>
+- 清理僵尸进程：<br>
+&emsp;通过kill父进程来处理僵尸进程，原理如1中描述。<br>
