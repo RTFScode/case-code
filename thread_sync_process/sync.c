@@ -2,9 +2,12 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<errno.h>
+
+//num在这里就是一个共享资源
 static unsigned int num;
 
-static pthread_mutex_t mutex;
+//定义互斥锁和自旋锁  可以采用显示的调用初始化函数进行初始化
+static pthread_mutex_t mutex; //= PTHREAD_MUTEX_INITIALIZER;
 static pthread_spinlock_t spin;
 
 void* mutex_func1()
@@ -76,6 +79,16 @@ int main()
 {
     //自旋锁需要显示调用初始化函数，否则获取不到锁资源
     pthread_spin_init(&spin,PTHREAD_PROCESS_SHARED);
+    //初始化互斥所
+    /*  第二个参数是互斥锁的属性
+     *  pthread_mutexattr_t mutex_attr;
+     *  pthread_mutexattr_init(&mutex_attr);
+     *  pthread_mutexattr_setpshared(&mutex_attr,PTHREAD_PROCESS_SHARED);
+     *  pthread_mutex_init(&mutex,&mutex_attr);
+     * 上面的函数就是设置属性的方式
+     * */
+    pthread_mutex_init(&mutex,NULL);
+
     unsigned int time_now = get_systime();
     pthread_t tid1;
     pthread_t tid2;
@@ -117,5 +130,7 @@ int main()
     printf("spin_use_time:%u\n",time_end-time_mutex_over);
     //销毁自旋锁
     pthread_spin_destroy(&spin);
+    //销毁互斥锁
+    pthread_mutex_destroy(&mutex);
     return 0;
 }
