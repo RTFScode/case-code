@@ -85,6 +85,7 @@ int main()
      *  pthread_mutexattr_init(&mutex_attr);
      *  pthread_mutexattr_setpshared(&mutex_attr,PTHREAD_PROCESS_SHARED);
      *  pthread_mutex_init(&mutex,&mutex_attr);
+	 *	pthread_mutexattr_destroy(&mutex_attr);	//必须销毁互斥锁属性对象
      * 上面的函数就是设置属性的方式
      * */
     pthread_mutex_init(&mutex,NULL);
